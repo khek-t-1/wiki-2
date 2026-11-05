@@ -116,9 +116,11 @@ for f in "${files[@]}"; do
   n=0; ok=0
   while [ "$n" -lt "$RETRIES" ]; do
     n=$((n+1))
-    if gh release upload "$TAG" "$f" --repo "$REPO" 2>&1 | tail -1; then
+    # output ko variable mein lete hain, warna pipe ka exit code (tail) 0 ho jata hai
+    if out=$(gh release upload "$TAG" "$f" --repo "$REPO" 2>&1); then
       ok=1; break
     fi
+    echo "$out" | tail -2 | sed 's/^/    /'
     echo "  retry $name ($n/$RETRIES) — 5s"
     sleep 5
   done
